@@ -1,118 +1,144 @@
 <template>
-  <div class="main">
-    <div class="main-left">
-      <div class="logo">logo</div>
-      <div class="menu">
-        <el-menu
-          :default-active="curTabId + ''"
-          background-color="#202427"
-          text-color="#fff"
-          active-text-color="#ffd04b">
-          <el-submenu v-for="(menu01, index01) in $store.state.menu" :key="menu01.id" :index="menu01.id + ''">
-            <template slot="title">
-              <i :class="menu01.icon"></i>
-              <span>{{menu01.menu}}</span>
-            </template>
-            <el-menu-item-group v-for="(menu02, index02) in menu01.subMenu" :key="menu02.id">
-              <el-menu-item :index="menu02.id + ''"
-                @click="selectMenu(menu02)">{{menu02.menu}}</el-menu-item>
-            </el-menu-item-group>
-          </el-submenu>
-        </el-menu>
-      </div>
+  <div class="erp-table account">
+    <el-row class="form-box">
+      <el-col :span="12">
+        <el-row :gutter="12">
+          <el-col :span="8">
+            <el-input
+              v-model="searchVal"
+              placeholder="请输入搜索内容"
+              prefix-icon="el-icon-search"
+              size="small"
+              clearable>
+            </el-input>
+          </el-col>
+          <el-col :span="4">
+            <el-button size="small" type="primary" plain icon="el-icon-search">搜索</el-button>
+          </el-col>
+        </el-row>
+      </el-col>
+      <el-col :span="12">
+        <el-row type="flex" justify="end">
+          <el-button size="small" type="primary">添加</el-button>
+          <el-button size="small" type="danger">删除</el-button>
+        </el-row>
+      </el-col>
+    </el-row>
+    <div class="tip-box">
+      <el-alert
+        title="这里是温馨提示信息"
+        type="warning"
+        show-icon
+        :closable="false">
+      </el-alert>
     </div>
-    <div class="main-right">
-      <div class="main-nav">
-        <div class="page-tab">
-          <div class="tab-item"
-            v-for="(tab, index) in pageTabs" :key="index"
-            :class="{cur: curTabId === tab.id}"
-            @click="selectTab(tab)">
-            {{tab.menu}}
-          </div>
-        </div>
-      </div>
-      <div class="main-page">
-        <router-view/>
-      </div>
+    <div class="table-box">
+      <el-table
+        :data="tableData"
+        :height="tableHeight"
+        border
+        highlight-current-row
+        >
+        <el-table-column
+          type="selection"
+          width="55">
+        </el-table-column>
+        <el-table-column
+          prop="name"
+          label="姓名">
+        </el-table-column>
+        <el-table-column
+          prop="email"
+          label="邮箱">
+        </el-table-column>
+        <el-table-column
+          prop="status"
+          label="是否激活">
+        </el-table-column>
+        <el-table-column
+          prop="auth"
+          label="权限">
+        </el-table-column>
+        <el-table-column
+          prop="role"
+          label="角色">
+        </el-table-column>
+        <el-table-column
+          prop="remark"
+          label="备注"
+          show-overflow-tooltip>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <el-button
+              size="mini"
+              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button
+              size="mini"
+              type="danger"
+              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-pagination
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="curPage"
+        :page-size="pageSize"
+        :page-sizes="pageSizes"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="400">
+      </el-pagination>
     </div>
   </div>
 </template>
 
 <script>
+import {
+  getAccountList
+} from '../../api'
 export default {
-  name: 'Index',
+  name: 'account',
   data() {
     return {
-      pageTabs: [],
-      curTabId: 0
-    }
+      searchVal: '',
+      curPage: 1,
+      pageSize: 10,
+      pageSizes: [5, 10, 20, 50, 100],
+      tableData: []
+    };
   },
   mounted() {
-    this.$store.dispatch('getMenu');
+    getAccountList().then(res => {
+      console.log(res);
+      this.tableData = res.data.list;
+    });
+  },
+  computed: {
+    tableHeight() {
+      return 300;
+    }
   },
   methods: {
-    selectMenu(menu) {
-      this.$router.push(menu.path);
+    handleSizeChange() {
 
-      this.curTabId = menu.id;
-
-      //是否已经存在该菜单的tab
-      let isExitTab = this.pageTabs.some(tab => tab.id === menu.id);
-      if (!isExitTab) this.pageTabs.push(menu);
     },
-    selectTab(tab) {
-      this.curTabId = tab.id;
-      this.$router.push(tab.path);
+    handleCurrentChange() {
+
+    },
+    handleEdit(index, row) {
+      console.log(index, row);
+    },
+    handleDelete(index, row) {
+      console.log(index, row);
     }
   }
 }
 </script>
 
 <style lang="less">
-.main {
-  display: flex;
-  width: 100%;
+.erp-table {
   height: 100%;
-  overflow: hidden;
-  .main-left {
-    flex: 0 0 210px;
-    background: #121212;
-  }
-  .main-right {
-    /*这里需要设置一个宽度数值，防止内容里的elementUI table组件最外层无法获取正确100%宽度*/
-    /*flex: 1;*/
-    width: calc(100% - 210px);
-    height: 100%;
-  }
-}
-.logo {
-  height: 80px;
-  color: #fff;
-}
-.main-nav {
-  height: 50px;
-  box-shadow: 0 0 10px #000;
-}
-.page-tab {
-  display: flex;
-  height: 50px;
-  line-height: 50px;
-  .tab-item {
-    padding: 0 12px;
-    border-right: 1px solid #ddd;
-    cursor: pointer;
-    &.cur {
-      border-bottom: 3px solid orange;
-    }
-  }
-}
-.main-page {
-  overflow-y: auto;
-  height: calc(100% - 50px);
-}
-
-.el-menu {
-  border-right: 0;
+  padding: 20px;
 }
 </style>
