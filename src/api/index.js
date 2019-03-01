@@ -1,5 +1,8 @@
-import ajax from './ajax';
+import ajax from '../util/ajax';
 
 export const getMenu = () => ajax({
-	url: '/api/getMenu'
+	url: '/api/getMenu',
+	loading: true
 });
+
+export * from './system';
