@@ -24,15 +24,15 @@
         </el-row>
       </el-col>
     </el-row>
-    <div class="tip-box">
+    <el-row class="tip-box">
       <el-alert
         title="这里是温馨提示信息"
         type="warning"
         show-icon
         :closable="false">
       </el-alert>
-    </div>
-    <div class="table-box">
+    </el-row>
+    <el-row class="table-box">
       <el-table
         :data="tableData"
         :height="tableHeight"
@@ -87,9 +87,9 @@
         :page-size="pageSize"
         :page-sizes="pageSizes"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="400">
+        :total="total">
       </el-pagination>
-    </div>
+    </el-row>
   </div>
 </template>
 
@@ -105,13 +105,15 @@ export default {
       curPage: 1,
       pageSize: 10,
       pageSizes: [5, 10, 20, 50, 100],
-      tableData: []
+      tableData: [],
+      total: 0
     };
   },
   mounted() {
     getAccountList().then(res => {
-      console.log(res);
-      this.tableData = res.data.list;
+      let data = res.data;
+      this.tableData = data.list;
+      this.total = data.total;
     });
   },
   computed: {
@@ -140,5 +142,11 @@ export default {
 .erp-table {
   height: 100%;
   padding: 20px;
+  .form-box {
+    margin-bottom: 12px;
+  }
+  .tip-box {
+    margin-bottom: 12px;
+  }
 }
 </style>
