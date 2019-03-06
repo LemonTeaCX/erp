@@ -3,6 +3,7 @@ import Router from 'vue-router'
 
 import Index from '../pages/index'
 import Login from '../pages/login'
+import Register from '../pages/register'
 import Account from '../pages/system/account'
 import Auth from '../pages/system/auth'
 
@@ -27,6 +28,10 @@ export default new Router({
     {
       path: '/login',
       component: Login
+    },
+    {
+      path: '/register',
+      component: Register
     },
   ]
 });
