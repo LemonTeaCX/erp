@@ -13,7 +13,8 @@
             </el-input>
           </el-col>
           <el-col :span="4">
-            <el-button size="small" type="primary" plain icon="el-icon-search">搜索</el-button>
+            <el-button size="small" type="primary" plain icon="el-icon-search"
+              @click="searchList()">搜索</el-button>
           </el-col>
         </el-row>
       </el-col>
@@ -83,7 +84,7 @@
       <el-pagination
         @size-change="handleSizeChange"
         @current-change="handleCurrentChange"
-        :current-page="curPage"
+        :current-page="pageIndex"
         :page-size="pageSize"
         :page-sizes="pageSizes"
         layout="total, sizes, prev, pager, next, jumper"
@@ -102,19 +103,15 @@ export default {
   data() {
     return {
       searchVal: '',
-      curPage: 1,
-      pageSize: 10,
+      pageIndex: 1,
+      pageSize: 5,
       pageSizes: [5, 10, 20, 50, 100],
       tableData: [],
       total: 0
     };
   },
   mounted() {
-    getAccountList().then(res => {
-      let data = res.data;
-      this.tableData = data.list;
-      this.total = data.total;
-    });
+    this.searchList();
   },
   computed: {
     tableHeight() {
@@ -122,11 +119,24 @@ export default {
     }
   },
   methods: {
-    handleSizeChange() {
+    async searchList(parms) {
+      parms = Object.assign({
+        searchVal: this.searchVal,
+        pageIndex: this.pageIndex,
+        pageSize: this.pageSize
+      }, parms);
 
+      let res = await getAccountList(parms);
+      this.tableData = res.data.list;
+      this.total = res.data.total;
     },
-    handleCurrentChange() {
-
+    handleSizeChange(pageSize) {
+      this.pageSize = pageSize;
+      this.searchList();
+    },
+    handleCurrentChange(pageIndex) {
+      this.pageIndex = pageIndex;
+      this.searchList();
     },
     handleEdit(index, row) {
       console.log(index, row);
