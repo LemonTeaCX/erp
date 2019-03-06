@@ -31,6 +31,9 @@
             {{tab.menu}}
           </div>
         </div>
+        <div class="user-wrap">
+          <div class="user-name">董磊<i class="el-icon-arrow-down"></i></div>
+        </div>
       </div>
       <div class="main-page">
         <router-view/>
@@ -91,11 +94,12 @@ export default {
   color: #fff;
 }
 .main-nav {
+  display: flex;
   height: 50px;
   box-shadow: 0 0 10px #000;
 }
 .page-tab {
-  display: flex;
+  flex: 1;
   height: 50px;
   line-height: 50px;
   .tab-item {
@@ -105,6 +109,17 @@ export default {
     &.cur {
       border-bottom: 3px solid orange;
     }
+  }
+}
+.user-wrap {
+  justify-content: flex-end;
+  border-left: 1px solid #ddd;
+  padding: 0 12px;
+  line-height: 50px;
+  cursor: pointer;
+  i {
+    margin-left: 5px;
+    font-size: 14px;
   }
 }
 .main-page {
