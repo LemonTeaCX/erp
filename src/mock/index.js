@@ -6,11 +6,12 @@ Mock.setup({
 });
 
 let { copyJson } = new Util();
-let BASE_URL = 'http://localhost:8080';
+let BASE_URL = 'http://localhost:3000';
 let resWrap = {
 	"code": 0,
   "data": {},
-	"msg": "success"
+	"msg": "",
+	"result": "success"
 };
 let mergeRes = (json, ...moreJson) => {
 	return Object.assign(copyJson(resWrap), json, ...moreJson);
@@ -50,7 +51,7 @@ Mock.mock(`${BASE_URL}/api/getMenu`, 'get', mergeRes({
 	]
 }));
 
-Mock.mock(`${BASE_URL}/api/getAccountList`, 'get', mergeRes({
+Mock.mock(`${BASE_URL}/api/getAccountList`, 'post', mergeRes({
   "data": {
 		"list|3-20": [
 			{
