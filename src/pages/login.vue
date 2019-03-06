@@ -2,7 +2,7 @@
   <div class="login">
     <el-row class="login-nav"></el-row>
     <el-row>
-      <el-col class="login-main" :offset="4" :span="16">
+      <el-col class="login-main" :offset="6" :span="12">
         <el-row>
           <el-col :span="14">
             <div class="login-desc">this is 描述</div>
@@ -11,12 +11,20 @@
               <el-form :model="loginForm" :rules="rules" ref="loginForm" class="login-box">
                 <el-form-item prop="user">
                   <div>Username</div>
-                  <el-input v-model="loginForm.user" placeholder="请输入手机或邮箱"></el-input>
+                  <el-input v-model="loginForm.user" placeholder="请输入用户名或手机"></el-input>
                 </el-form-item>
                 <el-form-item prop="password">
                   <div>Password</div>
                   <el-input v-model="loginForm.password" placeholder="请输入密码"></el-input>
                 </el-form-item>
+                <el-row class="login-else">
+                  <el-col :span="12">
+                    <el-button type="text">忘记密码</el-button>
+                  </el-col>
+                  <el-col :span="12" class="tar">
+                    <el-button type="text" @click="register">注册</el-button>
+                  </el-col>
+                </el-row>
                 <el-button class="login-btn" type="success"
                   :disabled="loginBtnLoading" :loading="loginBtnLoading"
                   @click="login">登录</el-button>
@@ -29,9 +37,7 @@
 </template>
 
 <script>
-import {
-  login
-} from '../api'
+import { login } from '../api';
 export default {
   name: 'Login',
   data() {
@@ -43,25 +49,23 @@ export default {
       },
       rules: {
         user: [
-          { required: true, message: '请输入手机或邮箱', trigger: 'blur' },
-          { min: 3, max: 15, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入用户名或手机', trigger: 'blur' }
         ],
         password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 3, max: 15, message: '长度在 3 到 5 个字符', trigger: 'blur' }
+          { required: true, message: '请输入密码', trigger: 'blur' }
         ]
       }
     };
   },
   methods: {
     async login() {
-      let _this = this;
+      let _this = this,
+        isValid = await this.validForm();
+      if (!isValid) return;
 
       this.loginBtnLoading = true;
-
-      let res = await login(_this.loginForm);
-      let isSuccess = res.result;
-      console.log(res);
+      let res = await login(_this.loginForm),
+        isSuccess = res.result;
 
       if (!isSuccess) this.loginBtnLoading = false;
       _this.$message({
@@ -73,6 +77,14 @@ export default {
           }
         }
       });
+    },
+    validForm() {
+      return new Promise((resolve, reject) => {
+        this.$refs['loginForm'].validate(valid => resolve(valid));
+      });
+    },
+    register() {
+      this.$router.push('/register');
     }
   }
 }
@@ -89,16 +101,18 @@ export default {
   background: #24292e;
 }
 .login-main {
-  padding-top: 50px;
+  padding-top: 100px;
 }
 .login-box {
   background: #fafbfc;
   border-radius: 3px;
   padding: 24px;
-}
-.login-btn {
-  width: 100%;
-  margin-top: 20px;
+  .login-else {
+    margin-top: 12px;
+  }
+  .login-btn {
+    width: 100%;
+  }
 }
 .el-form-item {
   margin-bottom: 8px;
