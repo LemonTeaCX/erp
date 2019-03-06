@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 
 import Index from '../pages/index'
+import Login from '../pages/login'
 import Account from '../pages/system/account'
 import Auth from '../pages/system/auth'
 
@@ -22,6 +23,10 @@ export default new Router({
 		      component: Auth
 		    }
       ]
+    },
+    {
+      path: '/login',
+      component: Login
     },
   ]
 });
