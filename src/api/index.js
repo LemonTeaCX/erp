@@ -5,4 +5,5 @@ export const getMenu = () => ajax({
 	loading: true
 });
 
+export * from './login';
 export * from './system';
