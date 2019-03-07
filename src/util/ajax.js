@@ -1,8 +1,13 @@
 import axios from 'axios';
 import Qs from 'qs';
 import LoadingUtil from './loading';
+import router from '../router';
+import Util from '../util/util';
 
+let { getCookie } = new Util();
 let loadingUtil = new LoadingUtil();
+
+console.log(getCookie('lemon'));
 
 axios.defaults.timeout = 30000;
 axios.defaults.baseURL ='http://localhost:3000';
@@ -23,6 +28,13 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     loadingUtil.endLoading();
+    if (response.data && response.data.code === 0) {
+      // 没权限、登录过期
+      // router.replace({
+      //   path: '/login',
+      //   query: { redirect: router.currentRoute.path },
+      // });
+    }
     return response.data;
   },
   error => {
@@ -36,7 +48,8 @@ export default function ajax(options) {
 		let config = Object.assign({
 			method: 'get',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded'
+        'Content-Type': 'application/x-www-form-urlencoded',
+        'Auth-Token': '123'
       }
 		}, options);
 
