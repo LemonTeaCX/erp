@@ -113,8 +113,8 @@ export default {
   .login-btn {
     width: 100%;
   }
-}
-.el-form-item {
-  margin-bottom: 8px;
+  .el-form-item {
+    margin-bottom: 8px;
+  }
 }
 </style>
