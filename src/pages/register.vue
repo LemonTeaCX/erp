@@ -11,6 +11,16 @@
                 <el-input v-model="registerForm.username" clearable></el-input>
               </el-col>
             </el-form-item>
+            <el-form-item label="密码" prop="password">
+              <el-col :span="6">
+                <el-input type="password" v-model="registerForm.password" clearable></el-input>
+              </el-col>
+            </el-form-item>
+            <el-form-item label="确认密码" prop="checkPassword">
+              <el-col :span="6">
+                <el-input type="password" v-model="registerForm.checkPassword" clearable></el-input>
+              </el-col>
+            </el-form-item>
             <el-form-item label="手机号" prop="phone">
               <el-col :span="6">
                 <el-input v-model="registerForm.phone" clearable></el-input>
@@ -50,10 +60,30 @@ export default {
   name: 'register',
   data() {
     let { isPhone } = new Valid();
+    let validPass = (rule, value, callback) => {
+      if (value === '')
+        return callback(new Error('请输入密码'));
+
+      if (this.registerForm.checkPassword !== '')
+        this.$refs[this.formName].validateField('checkPass');
+
+      callback();
+    };
+    let validCheckPass = (rule, value, callback) => {
+      if (value === '')
+        return callback(new Error('请再次输入密码'));
+
+      if (value !== this.registerForm.password)
+        return callback(new Error('两次输入密码不一致!'));
+
+      callback();
+    };
     return {
       formName: 'formEle',
       registerForm: {
         username: '',
+        password: '',
+        checkPassword: '',
         phone: '',
         email: '',
         sex: '1',
@@ -63,6 +93,14 @@ export default {
         username: [
           { required: true, message: '请输入账号名称', trigger: 'blur' },
           { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+        ],
+        password: [
+          { required: true, message: '请输入密码', trigger: 'blur' },
+          { validator: validPass, trigger: 'blur' }
+        ],
+        checkPassword: [
+          { required: true, message: '请再次输入密码', trigger: 'blur' },
+          { validator: validCheckPass, trigger: 'blur' }
         ],
         phone: [
           { required: true, message: '请输入手机号码', trigger: 'blur' },
