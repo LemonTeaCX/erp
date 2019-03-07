@@ -6,9 +6,10 @@ Mock.setup({
 });
 
 let { copyJson } = new Util();
+
 let BASE_URL = 'http://localhost:3000';
 let resWrap = {
-	"code": 0,
+	"code": 1,
   "data": {},
 	"msg": "",
 	"result": "success"
