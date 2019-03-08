@@ -15,7 +15,7 @@
                 </el-form-item>
                 <el-form-item prop="password">
                   <div>Password</div>
-                  <el-input v-model="loginForm.password" placeholder="请输入密码"></el-input>
+                  <el-input v-model="loginForm.password" @keyup.enter.native="login" placeholder="请输入密码"></el-input>
                 </el-form-item>
                 <el-row class="login-else">
                   <el-col :span="12">
@@ -38,6 +38,9 @@
 
 <script>
 import { login } from '../api';
+import Util from '../util/util';
+
+let { setCookie } = new Util();
 export default {
   name: 'Login',
   data() {
@@ -74,6 +77,7 @@ export default {
         onClose(msgIns) {
           if (isSuccess) {
             _this.$router.push('/');
+            setCookie('token', res.token);
           }
         }
       });
