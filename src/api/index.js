@@ -2,6 +2,7 @@ import ajax from '../util/ajax';
 
 export const getMenu = () => ajax({
 	url: '/api/getMenu',
+	method: 'post',
 	loading: true
 });
 
