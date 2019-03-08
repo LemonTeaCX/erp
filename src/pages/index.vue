@@ -58,11 +58,10 @@ export default {
     selectMenu(menu) {
       this.$router.push(menu.path);
 
-      this.curTabId = menu.id;
-
+      /*this.curTabId = menu.id;
       //是否已经存在该菜单的tab
       let isExitTab = this.pageTabs.some(tab => tab.id === menu.id);
-      if (!isExitTab) this.pageTabs.push(menu);
+      if (!isExitTab) this.pageTabs.push(menu);*/
     },
     selectTab(tab) {
       this.curTabId = tab.id;
