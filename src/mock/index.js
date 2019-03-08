@@ -18,7 +18,7 @@ let mergeRes = (json, ...moreJson) => {
 	return Object.assign(copyJson(resWrap), json, ...moreJson);
 };
 
-Mock.mock(`${BASE_URL}/api/getMenu`, 'get', mergeRes({
+Mock.mock(`${BASE_URL}/api/getMenu`, 'post', mergeRes({
   "data": [
 		{
 	    "id": 1,
