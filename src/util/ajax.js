@@ -1,13 +1,12 @@
 import axios from 'axios';
 import Qs from 'qs';
-import LoadingUtil from './loading';
 import router from '../router';
 import Util from '../util/util';
+import LoadingUtil from './loading';
+import { Message } from 'element-ui';
 
 let { getCookie } = new Util();
 let loadingUtil = new LoadingUtil();
-
-console.log(getCookie('lemon'));
 
 axios.defaults.timeout = 30000;
 axios.defaults.baseURL ='http://localhost:3000';
@@ -28,17 +27,24 @@ axios.interceptors.request.use(
 axios.interceptors.response.use(
   response => {
     loadingUtil.endLoading();
-    if (response.data && response.data.code === 0) {
-      // 没权限、登录过期
-      // router.replace({
-      //   path: '/login',
-      //   query: { redirect: router.currentRoute.path },
-      // });
-    }
     return response.data;
   },
   error => {
     loadingUtil.endLoading();
+
+    if (error.response && error.response.status === 401) {
+      // 没权限、登录过期
+      Message({
+        message: '登录过期，请重新登录',
+        type: 'error',
+        onClose() {
+          router.replace({
+            path: '/login',
+            query: { redirect: router.currentRoute.path },
+          });
+        }
+      });
+    }
     return Promise.reject(error);
   }
 );
@@ -49,7 +55,7 @@ export default function ajax(options) {
 			method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
-        'Auth-Token': '123'
+        'Auth-Token': getCookie('token')
       }
 		}, options);
 
