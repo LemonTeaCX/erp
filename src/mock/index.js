@@ -5,11 +5,10 @@ Mock.setup({
     timeout: 1000
 });
 
-let { copyJson } = new Util();
+let { copyJson } = Util;
 
 let BASE_URL = 'http://localhost:3000';
 let resWrap = {
-	"code": 1,
   "data": {},
 	"msg": "",
 	"result": "success"
@@ -24,16 +23,16 @@ Mock.mock(`${BASE_URL}/api/getMenu`, 'post', mergeRes({
 	    "id": 1,
 			"menu": "系统",
 			"icon": "el-icon-location",
-			"subMenu": [
+			"nodes": [
 				{
 					"id": 4,
-					"parentId": 1,
+					"parent_id": 1,
 					"menu": "账号管理",
 					"path": "/system/account"
 				},
 				{
 					"id": 5,
-					"parentId": 1,
+					"parent_id": 1,
 					"menu": "权限管理",
 					"path": "/system/auth"
 				}
