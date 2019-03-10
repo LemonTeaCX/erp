@@ -4,7 +4,6 @@
       <div class="logo">logo</div>
       <div class="menu">
         <el-menu
-          :default-active="curTabId + ''"
           background-color="#202427"
           text-color="#fff"
           active-text-color="#ffd04b">
@@ -13,7 +12,7 @@
               <i :class="menu01.icon"></i>
               <span>{{menu01.menu}}</span>
             </template>
-            <el-menu-item-group v-for="(menu02, index02) in menu01.subMenu" :key="menu02.id">
+            <el-menu-item-group v-for="(menu02, index02) in menu01.nodes" :key="menu02.id">
               <el-menu-item :index="menu02.id + ''"
                 @click="selectMenu(menu02)">{{menu02.menu}}</el-menu-item>
             </el-menu-item-group>
@@ -23,16 +22,23 @@
     </div>
     <div class="main-right">
       <div class="main-nav">
-        <div class="page-tab">
-          <div class="tab-item"
-            v-for="(tab, index) in pageTabs" :key="index"
-            :class="{cur: curTabId === tab.id}"
-            @click="selectTab(tab)">
-            {{tab.menu}}
-          </div>
+        <div class="menu-nav">
+          {{curMenu.menu}}
         </div>
+        <div class="nav-space"></div>
         <div class="user-wrap">
-          <div class="user-name">董磊<i class="el-icon-arrow-down"></i></div>
+          <el-dropdown trigger="click" @command="userCommand">
+            <span class="el-dropdown-link">
+              {{userInfo.username}}<i class="el-icon-arrow-down el-icon--right"></i>
+            </span>
+            <el-dropdown-menu slot="dropdown">
+              <el-dropdown-item><i class="el-icon-edit-outline"></i> 修改密码</el-dropdown-item>
+              <el-dropdown-item divided command="loginOut"><i class="el-icon-back"></i> 退出登录</el-dropdown-item>
+            </el-dropdown-menu>
+          </el-dropdown>
+        </div>
+        <div class="message">
+          <i class="el-icon-bell"></i>
         </div>
       </div>
       <div class="main-page">
@@ -43,29 +49,42 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import Util from '../util/util';
+let { setCookie } = Util;
 export default {
   name: 'Index',
   data() {
     return {
-      pageTabs: [],
-      curTabId: 0
+      curMenu: {
+        menu: '首页'
+      }
     }
   },
   mounted() {
-    this.$store.dispatch('getMenu');
+    this.$store.dispatch('setMenu');
+  },
+  computed: {
+    ...mapState(['userInfo'])
   },
   methods: {
     selectMenu(menu) {
+      this.curMenu = menu;
       this.$router.push(menu.path);
-
-      /*this.curTabId = menu.id;
-      //是否已经存在该菜单的tab
-      let isExitTab = this.pageTabs.some(tab => tab.id === menu.id);
-      if (!isExitTab) this.pageTabs.push(menu);*/
     },
-    selectTab(tab) {
-      this.curTabId = tab.id;
-      this.$router.push(tab.path);
+    userCommand(command) {
+      switch (command) {
+        case 'loginOut':
+          this.loginOut();
+          break;
+        default:
+          break;
+      }
+    },
+    loginOut() {
+      window.localStorage.setItem('userInfo', '');
+      setCookie('token', '');
+      this.$router.push('/login');
     }
   }
 }
@@ -95,31 +114,26 @@ export default {
 .main-nav {
   display: flex;
   height: 50px;
+  line-height: 50px;
   box-shadow: 0 0 10px #000;
 }
-.page-tab {
+.menu-nav {
+  padding: 0 18px;
+  border-right: 1px solid #ddd;
+  border-bottom: 3px solid orange;
+}
+.nav-space {
   flex: 1;
-  height: 50px;
-  line-height: 50px;
-  .tab-item {
-    padding: 0 12px;
-    border-right: 1px solid #ddd;
-    cursor: pointer;
-    &.cur {
-      border-bottom: 3px solid orange;
-    }
-  }
 }
 .user-wrap {
-  justify-content: flex-end;
+  padding: 0 18px;
   border-left: 1px solid #ddd;
-  padding: 0 12px;
-  line-height: 50px;
   cursor: pointer;
-  i {
-    margin-left: 5px;
-    font-size: 14px;
-  }
+}
+.message {
+  padding: 0 18px;
+  border-left: 1px solid #ddd;
+  cursor: pointer;
 }
 .main-page {
   overflow-y: auto;
