@@ -59,7 +59,7 @@ import { register } from '../api';
 export default {
   name: 'register',
   data() {
-    let { isPhone } = new Valid();
+    let { isPhone } = Valid;
     let validPass = (rule, value, callback) => {
       if (value === '')
         return callback(new Error('请输入密码'));
@@ -131,9 +131,7 @@ export default {
         message: res.msg,
         type: isSuccess ? 'success' : 'error',
         onClose(msgIns) {
-          if (isSuccess) {
-            _this.$router.push('/login');
-          }
+          if (isSuccess) _this.$router.push('/login');
         }
       });
     },
