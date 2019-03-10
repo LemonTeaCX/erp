@@ -1,9 +1,13 @@
 import {
-	GET_MENU,
+	SET_MENU,
+	SET_USER_INFO,
 } from './mutation-types';
 
 export default {
-	[GET_MENU](state, {menu}) {
+	[SET_MENU](state, menu) {
 		state.menu = menu;
+	},
+	[SET_USER_INFO](state, userInfo) {
+		state.userInfo = userInfo;
 	}
 }
