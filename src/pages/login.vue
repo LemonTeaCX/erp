@@ -40,7 +40,7 @@
 import { login } from '../api';
 import Util from '../util/util';
 
-let { setCookie } = new Util();
+let { setCookie } = Util;
 export default {
   name: 'Login',
   data() {
@@ -78,6 +78,7 @@ export default {
           if (isSuccess) {
             _this.$router.push('/');
             setCookie('token', res.token);
+            _this.$store.dispatch('setUserInfo', res.data);
           }
         }
       });
