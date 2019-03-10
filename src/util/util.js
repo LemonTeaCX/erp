@@ -1,8 +1,7 @@
-export default class Util {
-	constructor(options) {}
+export default {
 	copyJson(json = {}) {
 		return JSON.parse(JSON.stringify(json));
-	}
+	},
 	getCookie(name = '') {
 		let cookies = document.cookie.split(';');
 		for (let i = cookies.length - 1; i >= 0; i--) {
@@ -11,7 +10,7 @@ export default class Util {
     		return cookie.substring(name.length + 1, cookie.length);
 		}
 		return '';
-	}
+	},
 	setCookie(cname, cvalue, exdays) {
 		let date = new Date();
 	  date.setTime(date.getTime()+(exdays*24*60*60*1000));
