@@ -1,6 +1,4 @@
-export default class Valid {
-	constructor(options) {}
-
+export default {
 	// 校验手机号
 	isPhone(rule, value, callback) {
 		if (!value) return callback(new Error('手机号为空'));
