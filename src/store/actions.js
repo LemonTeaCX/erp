@@ -1,5 +1,6 @@
 import {
-	GET_MENU,
+	SET_MENU,
+	SET_USER_INFO
 } from './mutation-types';
 
 import {
@@ -7,8 +8,12 @@ import {
 } from '../api'
 
 export default {
-	async getMenu({commit}) {
+	async setMenu({commit}) {
 		const result = await getMenu();
-		commit(GET_MENU, {menu: result.data});
+		commit(SET_MENU, result.data);
+	},
+	setUserInfo({commit}, userInfo) {
+		window.localStorage.setItem('userInfo', JSON.stringify(userInfo) || '');
+		commit(SET_USER_INFO, userInfo);
 	}
 }
