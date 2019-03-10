@@ -3,9 +3,9 @@ import Qs from 'qs';
 import router from '../router';
 import Util from '../util/util';
 import LoadingUtil from './loading';
-import { Message } from 'element-ui';
+import { Message, version } from 'element-ui';
 
-let { getCookie } = new Util();
+let { getCookie } = Util;
 let loadingUtil = new LoadingUtil();
 
 axios.defaults.timeout = 30000;
@@ -45,28 +45,29 @@ axios.interceptors.response.use(
         }
       });
     }
+
     return Promise.reject(error);
   }
 );
 
 export default function ajax(options) {
-	return new Promise((resolve, reject) => {
-		let config = Object.assign({
-			method: 'get',
+  return new Promise((resolve, reject) => {
+    let config = Object.assign({
+      method: 'get',
       headers: {
         'Content-Type': 'application/x-www-form-urlencoded',
         'Auth-Token': getCookie('token')
       }
-		}, options);
+    }, options);
 
     config.data = Qs.stringify(config.data);
 
-		axios(config)
-		.then(response => {
-			resolve(response);
-		})
-		.catch(error => {
-			reject(error);
-		});
-	});
+    axios(config)
+    .then(response => {
+      resolve(response);
+    })
+    .catch(error => {
+      reject(error);
+    });
+  });
 }
