@@ -15,7 +15,7 @@
                 </el-form-item>
                 <el-form-item prop="password">
                   <div>Password</div>
-                  <el-input v-model="loginForm.password" @keyup.enter.native="login" placeholder="请输入密码"></el-input>
+                  <el-input type="password" v-model="loginForm.password" @keyup.enter.native="login" placeholder="请输入密码"></el-input>
                 </el-form-item>
                 <el-row class="login-else">
                   <el-col :span="12">
