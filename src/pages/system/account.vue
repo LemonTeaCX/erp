@@ -20,7 +20,7 @@
       </el-col>
       <el-col :span="12">
         <el-row type="flex" justify="end">
-          <el-button size="small" type="primary">添加</el-button>
+          <el-button size="small" type="primary" @click="jumpAccountEdit(0)">添加</el-button>
           <el-button size="small" type="danger">删除</el-button>
         </el-row>
       </el-col>
@@ -73,7 +73,7 @@
           <template slot-scope="scope">
             <el-button
               size="mini"
-              @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+              @click="jumpAccountEdit(scope.row.id || 0)">编辑</el-button>
             <el-button
               size="mini"
               type="danger"
@@ -138,11 +138,14 @@ export default {
       this.pageIndex = pageIndex;
       this.searchList();
     },
-    handleEdit(index, row) {
-      console.log(index, row);
-    },
     handleDelete(index, row) {
       console.log(index, row);
+    },
+    jumpAccountEdit(id = 0) {
+      this.$router.push({
+        path: '/system/accountEdit',
+        query: { id }
+      });
     }
   }
 }
