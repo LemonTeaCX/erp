@@ -38,7 +38,7 @@
           </el-dropdown>
         </div>
         <div class="message">
-          <i class="el-icon-bell"></i>
+          <i class="el-icon-bell"><el-badge is-dot></el-badge></i>
         </div>
       </div>
       <div class="main-page">
@@ -68,9 +68,9 @@ export default {
     ...mapState(['userInfo'])
   },
   methods: {
-    selectMenu(menu) {
+    selectMenu(menu = {}) {
       this.curMenu = menu;
-      this.$router.push(menu.path);
+      menu.path && this.$router.push(menu.path);
     },
     userCommand(command) {
       switch (command) {
