@@ -1,5 +1,4 @@
 import axios from 'axios';
-import Qs from 'qs';
 import router from '../router';
 import Util from '../util/util';
 import LoadingUtil from './loading';
@@ -55,12 +54,9 @@ export default function ajax(options) {
     let config = Object.assign({
       method: 'get',
       headers: {
-        'Content-Type': 'application/x-www-form-urlencoded',
         'Auth-Token': getCookie('token')
       }
     }, options);
-
-    config.data = Qs.stringify(config.data);
 
     axios(config)
     .then(response => {
