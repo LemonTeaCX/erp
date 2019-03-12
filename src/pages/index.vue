@@ -37,7 +37,7 @@
             </el-dropdown-menu>
           </el-dropdown>
         </div>
-        <div class="message">
+        <div class="message" @click="notifyMsg">
           <i class="el-icon-bell"><el-badge is-dot></el-badge></i>
         </div>
       </div>
@@ -85,6 +85,14 @@ export default {
       window.localStorage.setItem('userInfo', '');
       setCookie('token', '');
       this.$router.push('/login');
+    },
+    notifyMsg() {
+      this.$notify({
+        title: '消息',
+        message: '快看，我只是一条消息！！！',
+        type: 'warning',
+        position: 'bottom-right'
+      });
     }
   }
 }
