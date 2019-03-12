@@ -1,7 +1,7 @@
 <template>
 	<div class="edit-wrap">
 	  <div class="edit-box">
-	    <div class="header">添加用户账号</div>
+	    <div class="header">{{formId ? '编辑用户账号' : '添加用户账号'}}</div>
 	    <div class="contant">
 				<el-form :model="editForm" :rules="rules" :ref="formName" size="small" label-width="100px">
 				  <el-form-item label="姓名" prop="name">
@@ -19,16 +19,16 @@
 				  </el-form-item>
 				  <el-form-item label="用户权限" prop="auth">
 				    <el-checkbox-group v-model="editForm.auth">
-				      <el-checkbox label="1">餐厅线上活动</el-checkbox>
-				      <el-checkbox label="2">地推活动</el-checkbox>
-				      <el-checkbox label="3">线下主题活动</el-checkbox>
-				      <el-checkbox label="4">单纯品牌曝光</el-checkbox>
+				      <el-checkbox v-for="(item, index) in authList"
+				      	:key="item.id" :label="item.value">{{item.name}}
+				      </el-checkbox>
 				    </el-checkbox-group>
 				  </el-form-item>
 				  <el-form-item label="用户角色" prop="role">
 				    <el-radio-group v-model="editForm.role">
-				      <el-radio label="1">线上品牌商赞助</el-radio>
-				      <el-radio label="2">线下场地免费</el-radio>
+				      <el-radio v-for="(item, index) in roleList"
+				      	:key="item.id" :label="item.value">{{item.name}}
+				      </el-radio>
 				    </el-radio-group>
 				  </el-form-item>
 				  <el-form-item label="备注" prop="remark">
@@ -37,7 +37,9 @@
 				    </el-col>
 				  </el-form-item>
 				  <el-form-item>
-				    <el-button type="primary" @click="submitForm">立即添加</el-button>
+				    <el-button type="primary" @click="submitForm">
+							{{formId ? '立即修改' : '立即添加'}}
+				    </el-button>
 				    <el-button @click="resetForm">重置</el-button>
 				  </el-form-item>
 				</el-form>
@@ -47,23 +49,28 @@
 </template>
 
 <script>
+import { mapState } from 'vuex';
+import { getAuth, getRole, getAccountDetail, addAccount, editAccount } from '../../api';
 export default {
   name: 'AccountEdit',
   data() {
   	return {
   		formName: 'formEle',
+  		formId: 0,
+  		// authList: [],
+  		// roleList: [],
   		editForm: {
         name: '',
         email: '',
-        status: false,
+        status: 0,
         auth: [],
-        role: '',
+        role: 1,
         remark: ''
       },
       rules: {
         name: [
           { required: true, message: '请输入账号名称', trigger: 'blur' },
-          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' }
+          { min: 2, max: 10, message: '长度在 2 到 10 个字符', trigger: 'blur' }
         ],
         email: [
           { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -82,21 +89,51 @@ export default {
   	}
   },
   mounted() {
-  	this.initEdit();
+  	this.initEditForm();
+  },
+  computed: {
+  	...mapState(['authList', 'roleList'])
   },
   methods: {
-  	initEdit() {
-  		console.log(this.$route.query);
+  	async initEditForm() {
+  		this.$store.dispatch('setAuthList');
+    	this.$store.dispatch('setRoleList');
+  		this.formId = this.$route.query.id || 0;
+  		if (!this.formId) return;
+
+  		let result = await getAccountDetail({ id: this.formId });
+  		this.editForm = result.data;
   	},
-    submitForm() {
-      this.$refs[this.formName].validate((valid) => {
-        if (valid) {
-          console.log(this.editForm);
-        } else {
-          console.log('error submit!!');
-          return false;
-        }
-      });
+    async submitForm() {
+      let _this = this, 
+      	isValid = await _this.validForm();
+      if (!isValid) return;
+
+      console.log(_this.editForm);
+      let id = _this.formId,
+      	result = {},
+      	isSuccess = false;
+
+      if (id) {
+      	_this.editForm.id = id;
+      	result = await editAccount(_this.editForm);
+    	} else {
+    		result = await addAccount(_this.editForm);
+    	};
+    	isSuccess = result.result;
+
+    	_this.$message({
+    		message: result.msg,
+    		type: isSuccess ? 'success' : 'error',
+    		onClose() {
+    			if (isSuccess) _this.$router.push('/system/account');
+    		}
+    	});
+    },
+    validForm() {
+    	return new Promise((resolve, reject) => {
+    		this.$refs[this.formName].validate((valid) => resolve(valid));
+    	});
     },
     resetForm() {
       this.$refs[this.formName].resetFields();
