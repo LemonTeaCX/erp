@@ -21,7 +21,7 @@
       <el-col :span="12">
         <el-row type="flex" justify="end">
           <el-button size="small" type="primary" @click="jumpAccountEdit(0)">添加</el-button>
-          <el-button size="small" type="danger">删除</el-button>
+          <el-button size="small" type="danger" @click="delAccountBatch()">删除</el-button>
         </el-row>
       </el-col>
     </el-row>
@@ -53,15 +53,19 @@
           label="邮箱">
         </el-table-column>
         <el-table-column
-          prop="status"
           label="是否激活">
+          <template slot-scope="scope">
+            {{scope.row.status ? '激活' : '未激活'}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="auth"
           label="权限">
+          <template slot-scope="scope">
+            <div v-for="item in scope.row.auth" :key="item.id">{{item.name}}</div>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="role"
+          prop="role.name"
           label="角色">
         </el-table-column>
         <el-table-column
@@ -77,7 +81,7 @@
             <el-button
               size="mini"
               type="danger"
-              @click="handleDelete(scope.$index, scope.row)">删除</el-button>
+              @click="delAccount(scope.row)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -95,9 +99,8 @@
 </template>
 
 <script>
-import {
-  getAccountList
-} from '../../api'
+import { mapState } from 'vuex';
+import { getAccountList, delAccount } from '../../api';
 export default {
   name: 'account',
   data() {
@@ -111,9 +114,12 @@ export default {
     };
   },
   mounted() {
+    this.$store.dispatch('setAuthList');
+    this.$store.dispatch('setRoleList');
     this.searchList();
   },
   computed: {
+    ...mapState(['authList', 'roleList']),
     tableHeight() {
       return 300;
     }
@@ -138,14 +144,33 @@ export default {
       this.pageIndex = pageIndex;
       this.searchList();
     },
-    handleDelete(index, row) {
-      console.log(index, row);
+    delAccount(row) {
+      let _this = this;
+
+      _this.$confirm(`此操作将永久删除"${row.name}"该账号，是否继续？`, '提示', {
+        comfirmButtonTex: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let result = await delAccount({ids: [row.id]});
+
+        _this.$message({
+          message: result.msg,
+          type: result.result ? 'success' : 'error'
+        });
+        this.searchList();
+      }).catch(() => {});
     },
     jumpAccountEdit(id = 0) {
+      let query = {};
+      if (id) query.id = id;
       this.$router.push({
         path: '/system/accountEdit',
-        query: { id }
+        query: query
       });
+    },
+    delAccountBatch() {
+      console.log(this.multipleSelection);
     }
   }
 }
